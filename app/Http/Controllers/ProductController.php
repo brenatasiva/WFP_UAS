@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Product;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('product.index');
+        $products = Product::all();
+        $categories = Category::all();
+        return view('product.index', compact('products'), compact('categories'));
     }
 
     /**
@@ -60,7 +63,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        $data = $product;
+        return view('product.index', compact('data'));
     }
 
     /**
@@ -116,5 +120,74 @@ class ProductController extends Controller
             $msg =  $this->handleAllRemoveChild($product);
             return redirect()->route('product.index')->with('error', $msg);
         }
+    }
+
+    public function getProductPerCategory($id)
+    {
+        $data = Product::where('category_id', $id)->get();
+        return view('product.show', compact('data'));
+    }
+
+    public function addToCart($id)
+    {
+        $p = Product::find($id);
+        $cart = session()->get('cart');
+        if (!isset($cart[$id])) {
+            $cart[$id] = [
+                'productId' => $p->id,
+                'name' => $p->name,
+                'quantity' => 1,
+                'price' => $p->price,
+            ];
+        } else {
+            $cart[$id]['quantity']++;
+        }
+        session()->put('cart', $cart);
+        return redirect()->back()->with('success', 'product add to cart succesfully');
+    }
+
+    public function cart()
+    {
+        $this->authorize('checkmember');
+        return view('transaction.cart');
+    }
+
+    public function compareProduct()
+    {
+        return view('product.compare');
+    }
+
+    public function kumpulanLaptop(Request $request)
+    {
+        $name = $request->get('name');
+        $data = Product::where('name', 'like', "%$name%")->where('category_id', 1)->get();
+        return response()->json(array(
+            'msg' => view('product.kumpulanlaptop', compact('data'))->render()
+        ), 200);
+    }
+
+    public function getLaptop(Request $request)
+    {
+        $id = $request->get('id');
+        $data = Product::find($id);
+        return response()->json(array(
+            'msg' => view('product.cardLaptop', compact('data'))->render()
+        ), 200);
+    }
+
+    public function showSpec(Request $request)
+    {
+        $data = $request->get('spec');
+        $name = $request->get('name');
+        return response()->json(array(
+            'msg' => view('product.modal', compact('data'), compact('name'))->render()
+        ), 200);
+    }
+
+    public function getLaptopData(Request $request)
+    {
+        $id = $request->get('id');
+        $data = Product::find($id);
+        return response()->json($data);
     }
 }

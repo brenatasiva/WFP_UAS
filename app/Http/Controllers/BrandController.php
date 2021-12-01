@@ -14,7 +14,8 @@ class BrandController extends Controller
      */
     public function index()
     {
-        return view('brand.index');
+        $data = Brand::all();
+        return view('brand.index', compact('data'));
     }
 
     /**
@@ -88,7 +89,7 @@ class BrandController extends Controller
     public function destroy(Brand $brand)
     {
         $this->authorize('delete-permission', $brand);
-        
+
         try {
             $brand->delete();
             return redirect()->route('brand.index')->with('status', 'Data brand succesfully deleted');

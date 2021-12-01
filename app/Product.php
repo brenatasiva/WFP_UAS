@@ -18,11 +18,6 @@ class Product extends Model
         return $this->belongsTo('App\Brand', 'brand_id', 'id');
     }
 
-    public function transactionDetail()
-    {
-        return $this->hasMany('App\TransactionDetail', 'product_id', 'id');
-    }
-
     public function image()
     {
         return $this->hasMany('App\Image', 'product_id', 'id');

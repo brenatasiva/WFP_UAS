@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\Product;
 
 class TransactionController extends Controller
 {
@@ -14,7 +17,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        return view('transaction.index');
+        $data = Transaction::all();
+        return view('transaction.index', compact('data'));
     }
 
     /**
@@ -52,7 +56,10 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        //
+        $this->authorize('checkpegawai');
+
+        $data = $transaction::all();
+        return view('transaction.index', compact('data'));
     }
 
     /**
@@ -100,5 +107,61 @@ class TransactionController extends Controller
             $msg =  $this->handleAllRemoveChild($transaction);
             return redirect()->route('transaction.index')->with('error', $msg);
         }
+    }
+
+    public function formSubmit()
+    {
+        $this->authorize('checkmember');
+        return view('transaction.checkout');
+    }
+
+    public function submitCheckout()
+    {
+        $this->authorize('checkmember');
+
+        $cart = session()->get('cart');
+        $user = Auth::user();
+        $t = new Transaction;
+        $t->user_id = $user->id;
+        $t->created_at = Carbon::now()->toDateTimeString();
+        $t->save();
+
+        $totalHarga = $t->insertProduct($cart, $user);
+        $t->total = $totalHarga;
+        $t->save();
+
+        $this->subtractQuantity($cart);
+
+        session()->forget('cart');
+        return redirect('home');
+    }
+
+    public function subtractQuantity($cart)
+    {
+        foreach ($cart as $id => $detail) {
+            $p = Product::find($detail['productId']);
+            $p->stock = $p->stock - $detail['quantity'];
+            $p->save();
+        }
+    }
+
+    public function forgetSession()
+    {
+        session()->forget('cart');
+    }
+
+    public function showDetail(Request $request)
+    {
+        $id = $request->get('transactionId');
+        $data = Transaction::find($id);
+        return response()->json(array(
+            'msg' => view('transaction.modal', compact('data'))->render()
+        ), 200);
+    }
+
+    public function showHistory()
+    {
+        $data = Transaction::where('user_id', Auth::user()->id)->get();
+        return view('transaction.index', compact('data'));
     }
 }
