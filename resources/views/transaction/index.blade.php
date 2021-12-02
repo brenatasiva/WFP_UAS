@@ -48,11 +48,11 @@
 @endsection
 
 @section('modal')
-<div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="modalCariLaptopLabel" aria-hidden="true">
+<div class="modal fade" id="modalDetail" tabindex="-1" aria-labelledby="modalDetail" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalCariLaptopLabel">Detail Transaksi</h5>
+        <h5 class="modal-title" id="modalDetail">Detail Transaksi</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

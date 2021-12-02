@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Image;
 use App\Product;
 use Illuminate\Http\Request;
 
@@ -15,9 +16,22 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
         $categories = Category::all();
-        return view('product.index', compact('products'), compact('categories'));
+        $data = [];
+        foreach ($categories as $category ) {
+            $products = Product::where('category_id', $category->id)->get();
+            $dataProduk = [];
+            foreach ($products as $product ) {
+                $images = Image::where('product_id',$product->id)->get();
+                $dataImage = [];
+                foreach ($images as $image ) {
+                    $dataImage[] = $image->name;
+                }
+                $dataProduk[] = ['produk' => $product, 'imageProduct' => $dataImage];               
+            }
+            $data["$category->name"] = $dataProduk;
+        }
+        return view('product.index', compact('data'));
     }
 
     /**
@@ -125,7 +139,7 @@ class ProductController extends Controller
     public function getProductPerCategory($id)
     {
         $data = Product::where('category_id', $id)->get();
-        return view('product.show', compact('data'));
+        return view('product.showProductCategory', compact('data'));
     }
 
     public function addToCart($id)

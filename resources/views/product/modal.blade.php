@@ -1,15 +1,11 @@
 <table class="table table-bordered" style="table-layout: fixed;">
     <thead class="thead-dark">
         <tr>
-            <th scope="col" colspan="2">#General</th>
+            <th scope="col" colspan="2">{{$name}}</th>
         </tr>
     </thead>
     <tbody>
         <?php $data = explode(';', $data);?>
-        <tr>
-            <td class="text-center">Product Name</td>
-            <td>{{$name}}</td>
-        </tr>
         <tr>
             <td class="text-center">RAM</td>
             <td>{{$data[0]}} GB</td>

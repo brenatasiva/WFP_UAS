@@ -50,9 +50,7 @@
                 </td>
                 <td>{{$d->brand->name}}</td>
                 <td>
-                    @if(Auth::user())
-                        <a href="{{url('add-to-cart',$d->id)}}">Add to cart</a>
-                    @endif
+                    <a href="{{url('add-to-cart',$d->id)}}">Add to cart</a>
                 </td>
             </tr>
         @endforeach 
@@ -84,7 +82,7 @@
 <script>
     function showSpec(spec, name) {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '{{route("product.showSpec")}}',
             data: {
                 '_token': '<?php echo csrf_token() ?>',
