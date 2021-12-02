@@ -10,15 +10,15 @@
     <tbody>
         <?php $total = 0; ?>
         @foreach ($data->product as $d)
-            <?php 
+        <?php 
                 $total += $d->pivot->subtotal; 
             ?>
-            <tr>
-                <td>{{$d->name}}</td>
-                <td>{{number_format($d->pivot->price)}}</td>
-                <td>{{number_format($d->pivot->quantity)}}</td>
-                <td>{{number_format($d->pivot->subtotal)}}</td>
-            </tr>
+        <tr>
+            <td>{{$d->name}}</td>
+            <td>{{number_format($d->pivot->price)}}</td>
+            <td>{{number_format($d->pivot->quantity)}}</td>
+            <td>{{number_format($d->pivot->subtotal)}}</td>
+        </tr>
         @endforeach
     </tbody>
     <tfoot>

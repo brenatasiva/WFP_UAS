@@ -9,19 +9,23 @@
     <meta name="author" content="" />
     <title>Dashboard - SB Admin</title>
     <link href="{{ asset ('sbadmin/css/styles.css')}}" rel="stylesheet" />
-    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+        crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous">
+    </script>
     @yield('style')
 </head>
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand" href="index.html">Start Bootstrap</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
+        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i
+                class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
             <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
+                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search"
+                    aria-describedby="basic-addon2" />
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
                 </div>
@@ -30,26 +34,27 @@
         <!-- Navbar-->
         <ul class="navbar-nav ml-auto ml-md-0">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                     <a class="dropdown-item" href="#">Settings</a>
                     @if (Auth::user() && Auth::user()->role->name=='Admin')
-                        <a class="dropdown-item" href="{{ route('register') }}">{{ __('Register Pegawai') }}</a>
+                    <a class="dropdown-item" href="{{ route('register') }}">{{ __('Register Pegawai') }}</a>
+                    <a class="dropdown-item" href="{{ url('user') }}">{{ __('Manage Pegawai') }}</a>
                     @endif
                     <div class="dropdown-divider"></div>
-                    
-                    @if (Auth::user())
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                                            document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
-                        </a>
 
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
+                    @if (Auth::user())
+                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                            document.getElementById('logout-form').submit();">
+                        {{ __('Logout') }}
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
                     @else
-                        <a href="/login" class="dropdown-item">Log In</a>
+                    <a href="/login" class="dropdown-item">Log In</a>
                     @endif
                 </div>
             </li>
@@ -66,30 +71,8 @@
                             Dashboard
                         </a>
                         <div class="sb-sidenav-menu-heading">Category</div>
-                        <a class="nav-link" href="{{url('product/category',1)}}"><div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>Laptop</a>
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSparepart" aria-expanded="false" aria-controls="collapseSparepart">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Sparepart
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseSparepart" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="{{url('product/category',2)}}">RAM</a>
-                                <a class="nav-link" href="{{url('product/category',3)}}">Battery</a>
-                                <a class="nav-link" href="{{url('product/category',4)}}">SSD</a>
-                                <a class="nav-link" href="{{url('product/category',5)}}">HDD</a>
-                            </nav>
-                        </div>
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccessories" aria-expanded="false" aria-controls="collapseAccessoriess">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Accessories
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseAccessories" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="{{url('product/category',6)}}">Mouse</a>
-                                <a class="nav-link" href="{{url('product/category',7)}}">Keyboard</a>
-                            </nav>
+                        <div id="category">
+
                         </div>
 
                         <div class="sb-sidenav-menu-heading">Addons</div>
@@ -97,10 +80,19 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Cart
                         </a>
-                        <a class="nav-link" href= @if(Auth::user()) @if(Auth::user()->role->name == 'Admin' || Auth::user()->role->name == 'Pegawai'){{url("history")}} @else {{url("showHistory")}} @endif @else {{url("login")}} @endif>
+
+                        @can('crud-permission')
+                        <a class="nav-link" href="{{url('history')}}">
                             <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                             History
                         </a>
+                        @else
+                        <a class="nav-link" href="{{url('showHistory')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                            History
+                        </a>
+                        @endcan
+
                         <a class="nav-link" href="{{ route('compareProduct') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                             Compare Products
@@ -136,7 +128,24 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     @yield('script')
     @yield('ajax')
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+        $.ajax({
+            type: 'POST',
+            url: '{{route("loadNav")}}',
+            data: {
+                '_token': '<?php echo csrf_token() ?>',
+            },
+            success: function (data) {
+                $("#category").html(data.msg);
+            },
+            error: function (xhr) {
+                console.log(xhr);
+            }
+        });
+
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" crossorigin="anonymous">
+    </script>
     <script src="{{ asset ('sbadmin/js/scripts.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="{{ asset ('sbadmin/assets/demo/chart-area-demo.js')}}"></script>

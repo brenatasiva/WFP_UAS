@@ -14,7 +14,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('user.index');
+        $data = User::where('role_id',2)->get();
+        return view('user.index', compact('data'));
     }
 
     /**
@@ -77,7 +78,15 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        if(null !== $request->get('password')){
+            $user->password = bcrypt($request->get('password'));
+            $user->save();
+            return redirect()->route('user.index')->with('status', 'User password succesfully reset');
+        }else{
+            $user->status = $request->get('status');
+            $user->save();
+            return redirect()->route('user.index')->with('status', 'Action succesfully done');
+        }
     }
 
     /**
@@ -97,5 +106,21 @@ class UserController extends Controller
             $msg =  $this->handleAllRemoveChild($user);
             return redirect()->route('user.index')->with('error', $msg);
         }
+    }
+
+    public function showResetPasswordModal(Request $request)
+    {
+        $id = $request->get('pegawaiId');
+        $data = User::find($id);
+        return response()->json(array(
+            'msg' => view('user.modal', compact('data'))->render()
+        ), 200);
+    }
+
+    public function suspend(Request $request, User $user)
+    {
+        $user->status = $request->get('status');
+        $user->save();
+        return redirect()->route('user.index')->with('status', 'Action succesfully done');
     }
 }

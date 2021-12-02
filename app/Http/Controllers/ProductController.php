@@ -77,8 +77,12 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $data = $product;
-        return view('product.index', compact('data'));
+        $images = Image::where('product_id', $product->id)->get();
+        $categories = Category::all();
+        $data['images'] = $images;
+        $data['product'] = $product;
+        $data['categories'] = $categories;
+        return view('product.show', compact('data'));
     }
 
     /**
@@ -183,9 +187,11 @@ class ProductController extends Controller
     public function getLaptop(Request $request)
     {
         $id = $request->get('id');
-        $data = Product::find($id);
+        // $id = 1;
+        $product = Product::find($id);
+        $image = Image::where('product_id', $id)->get();
         return response()->json(array(
-            'msg' => view('product.cardLaptop', compact('data'))->render()
+            'msg' => view('product.cardLaptop', compact(['product','image']))->render()
         ), 200);
     }
 
@@ -201,7 +207,8 @@ class ProductController extends Controller
     public function getLaptopData(Request $request)
     {
         $id = $request->get('id');
+        $image = Image::where('product_id',$id)->get();
         $data = Product::find($id);
-        return response()->json($data);
+        return response()->json(['product'=>$data,'img'=>$image]);
     }
 }

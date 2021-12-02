@@ -36,6 +36,8 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('crud-permission');
+
         $data = new Brand();
 
         $data->name = $request->get('name');
@@ -62,6 +64,8 @@ class BrandController extends Controller
      */
     public function edit(Brand $brand)
     {
+        $this->authorize('crud-permission');
+
         $data = $brand;
         return view("brand.edit", compact('data'));
     }
@@ -75,6 +79,8 @@ class BrandController extends Controller
      */
     public function update(Request $request, Brand $brand)
     {
+        $this->authorize('crud-permission', $brand);
+
         $brand->name = $request->get('name');
         $brand->save();
         return redirect()->route('brand.index')->with('status', 'Data brand succesfully changed');
@@ -88,7 +94,7 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
-        $this->authorize('delete-permission', $brand);
+        $this->authorize('crud-permission', $brand);
 
         try {
             $brand->delete();
@@ -97,5 +103,16 @@ class BrandController extends Controller
             $msg =  $this->handleAllRemoveChild($brand);
             return redirect()->route('brand.index')->with('error', $msg);
         }
+    }
+
+    public function showEditModal(Request $request)
+    {
+        $this->authorize('crud-permission');
+
+        $id = $request->get('brandId');
+        $data = Brand::find($id);
+        return response()->json(array(
+            'msg' => view('brand.modal', compact('data'))->render()
+        ), 200);
     }
 }

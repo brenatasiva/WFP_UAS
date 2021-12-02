@@ -31,6 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('transaction', 'TransactionController');
     Route::resource('transactionDetail', 'TransactionDetailController');
     Route::resource('role', 'RoleController');
+     Route::resource('user', 'UserController');
 
     Route::get('cart', 'ProductController@cart');
     Route::get('add-to-cart/{id}', 'ProductController@addToCart');
@@ -43,6 +44,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('kplaptop', 'ProductController@kumpulanLaptop')->name('kumpulanLaptop');
     Route::post('getlaptop', 'ProductController@getLaptop')->name('getLaptop');
     Route::post('getlaptopdata', 'ProductController@getLaptopData')->name('getLaptopData');
+    Route::post('formEditBrand', 'BrandController@showEditModal')->name('formEditBrand');
+    Route::post('formEditCategory', 'CategoryController@showEditModal')->name('formEditCategory');
+    Route::post('formResetPassword', 'UserController@showResetPasswordModal')->name('formResetPassword');
+    Route::post('suspend', 'UserController@suspend')->name('user.suspend');
+    Route::post('loadNav', 'CategoryController@loadNav')->name('loadNav');
 });
 
 Auth::routes();

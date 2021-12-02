@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Product;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\Catch_;
 
@@ -37,9 +38,13 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('crud-permission');
+
         $data = new Category();
 
         $data->name = $request->get('name');
+        $data->type = $request->get('type');
+        $data->unit = $request->get('unit');
         $data->save();
         return redirect()->route('category.index')->with('status', 'Category is added');
     }
@@ -63,6 +68,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        $this->authorize('crud-permission', $category);
+
         $data = $category;
         return view("category.edit", compact('data'));
     }
@@ -76,7 +83,11 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
+        $this->authorize('crud-permission', $category);
+
         $category->name = $request->get('name');
+        $category->type = $request->get('type');
+        $category->unit = $request->get('unit');
         $category->save();
         return redirect()->route('category.index')->with('status', 'Data category succesfully changed');
     }
@@ -89,7 +100,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $this->authorize('delete-permission', $category);
+        $this->authorize('crud-permission', $category);
 
         try {
             $category->delete();
@@ -98,5 +109,24 @@ class CategoryController extends Controller
             $msg =  $this->handleAllRemoveChild($category);
             return redirect()->route('category.index')->with('error', $msg);
         }
+    }
+
+    public function showEditModal(Request $request)
+    {
+        $this->authorize('crud-permission');
+
+        $id = $request->get('categoryId');
+        $data = Category::find($id);
+        return response()->json(array(
+            'msg' => view('category.modal', compact('data'))->render()
+        ), 200);
+    }
+
+    public function loadNav()
+    {
+        $data = Category::all();
+        return response()->json(array(
+            'msg' => view('layout.nav', compact('data'))->render()
+        ), 200);
     }
 }

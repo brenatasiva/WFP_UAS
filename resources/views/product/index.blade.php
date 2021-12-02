@@ -1,16 +1,19 @@
 @extends('layout.sbadmin')
 @section('content')
 <main>
-<div class="container-fluid">
-    <ol class="breadcrumb mt-4">
-        <li class="breadcrumb-item active">Products</li>
-    </ol>
-    @foreach ($data as $key => $d)
-    <div class="border-top border-bottom">
-        <h1 class="h1 text-center my-2">{{$key}}</h1>
-        <div class="row p-3 justify-content-around">
-            <?php $c = 0; ?>
-            @foreach ($d as $product)
+    <div class="container-fluid">
+        <ol class="breadcrumb mt-4">
+            <li class="breadcrumb-item active">Products</li>
+        </ol>
+        @php
+        $id = 1;
+        @endphp
+        @foreach ($data as $key => $d)
+        <div class="border-top border-bottom">
+            <h1 class="h1 text-center my-2"><a href="{{ route('product.showProductCategory',$id) }}">{{$key}}</a></h1>
+            <div class="row p-3 justify-content-around">
+                <?php $c = 0; ?>
+                @foreach ($d as $product)
                 <div class="col-lg-3">
                     <div class="card">
                         <?php $path = $product['imageProduct'][0]; ?>
@@ -20,7 +23,7 @@
                             @if(Auth::user())
                             <p>Harga : {{ number_format($product['produk']->price) }}</p>
                             @else
-                                <?php
+                            <?php
                                     $price = number_format($product['produk']->price);
                                     $price = explode(",", $price);
                                     $i = 0;
@@ -35,21 +38,26 @@
                             @endif
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between">
-                            <a class="small text-danger stretched-link" href="#">View Details</a>
+                            <a class="small text-danger stretched-link"
+                                href="{{ route('product.show',$product['produk']->id) }}">View
+                                Details</a>
                             <div class="small text-black">
-                            <i class="fas fa-angle-right"></i></div>
+                                <i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
                 </div>
                 <?php $c+=1 ?>
                 @if ($c == 3)
-                    @break
+                @break
                 @endif
-            @endforeach
+                @endforeach
+            </div>
         </div>
-    </div>  
-    @endforeach
-    
-</div>
+        @php
+        $id += 1;
+        @endphp
+        @endforeach
+
+    </div>
 </main>
 @endsection
