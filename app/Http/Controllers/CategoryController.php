@@ -16,6 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        $this->authorize('crud-permission');
         $data = Category::all();
         return view('category.index', compact('data'));
     }
@@ -27,7 +28,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('category.create');
+        //
     }
 
     /**
@@ -68,10 +69,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $this->authorize('crud-permission', $category);
-
-        $data = $category;
-        return view("category.edit", compact('data'));
+        //
     }
 
     /**

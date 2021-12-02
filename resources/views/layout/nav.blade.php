@@ -1,10 +1,10 @@
 <a class="nav-link" href="{{url('product/category',1)}}">
-    <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>Laptop
+    <div class="sb-nav-link-icon"><i class="fas fa-laptop"></i></div>Laptop
 </a>
 
 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSparepart" aria-expanded="false"
     aria-controls="collapseSparepart">
-    <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+    <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
     Sparepart
     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
 </a>
@@ -19,7 +19,7 @@
 </div>
 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccessories" aria-expanded="false"
     aria-controls="collapseAccessoriess">
-    <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+    <div class="sb-nav-link-icon"><i class="fas fa-link"></i></div>
     Accessories
     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
 </a>

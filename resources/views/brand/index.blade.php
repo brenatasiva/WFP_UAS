@@ -1,6 +1,12 @@
 @extends('layout.sbadmin')
 @section('content')
 
+@if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
+
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalCreate" onclick="">
     Add Brand
 </button>
@@ -83,6 +89,7 @@
 
 @section('ajax')
 <script>
+
     function modalEdit(brandId) {
         $.ajax({
             type: 'POST',

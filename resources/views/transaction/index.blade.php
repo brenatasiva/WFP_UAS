@@ -1,5 +1,12 @@
 @extends('layout.sbadmin')
 @section('content')
+
+@if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
+
 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
     <thead>
         <tr>
@@ -28,12 +35,21 @@
                     <td>{{$d->user->fullname}}</td>
                     <td><button onclick="showDetail({{$d->id}})" data-toggle="modal" data-target="#modalDetail">Lihat Detail</button></td>
                     <td>
-                        <select name="status">
-                            <option value="">Pilih Status</option>
-                            <option value="diterima">Diterima</option>
-                            <option value="ditolak">Ditolak</option>
-                            <option value="pending">Pending</option>
-                        </select>
+                        @if ($d->status == 'ditolak')
+                            <button type="button" class="btn btn-danger" disabled>TERTOLAK</button>
+                            @else
+                                <form method="post" action="{{url('transaction/'.$d->id)}}">
+                                @csrf
+                                @method('PUT')
+                                <select name="status" id="status">
+                                    <option value="diterima">Diterima</option>
+                                    <option value="ditolak">Ditolak</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                        @endif
+                        
                     </td>
                     @else
                     <td><button onclick="showDetail({{$d->id}})" data-toggle="modal" data-target="#modalDetail">Lihat Detail</button></td>

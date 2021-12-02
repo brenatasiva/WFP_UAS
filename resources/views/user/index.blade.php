@@ -1,5 +1,10 @@
 @extends('layout.sbadmin')
 @section('content')
+@if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
     <thead>
         <tr>

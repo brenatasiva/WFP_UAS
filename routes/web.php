@@ -22,23 +22,23 @@ Route::resource('image', 'ImageController');
 Route::get('/', 'ProductController@index');
 Route::get('/product/category/{id}', 'ProductController@getProductPerCategory')->name('product.showProductCategory');
 Route::get('/home', 'ProductController@index')->name('home');
-Route::get('/compare', 'ProductController@compareProduct')->name('compareProduct');
 Route::get('/forget', 'TransactionController@forgetSession');
 
 Route::post('showSpec', 'ProductController@showSpec')->name('product.showSpec');
+Route::post('loadNav', 'CategoryController@loadNav')->name('loadNav');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('transaction', 'TransactionController');
-    Route::resource('transactionDetail', 'TransactionDetailController');
     Route::resource('role', 'RoleController');
-     Route::resource('user', 'UserController');
+    Route::resource('user', 'UserController');
 
     Route::get('cart', 'ProductController@cart');
-    Route::get('add-to-cart/{id}', 'ProductController@addToCart');
     Route::get('checkout', 'TransactionController@formSubmit');
     Route::get('submit_checkout', 'TransactionController@submitCheckout')->name('submitCheckout');
     Route::get('history', 'TransactionController@show');
-    Route::get('showHistory', 'TransactionController@showHistory');
+    Route::get('showHistory', 'TransactionController@show');
+    Route::get('/compare', 'ProductController@compareProduct')->name('compareProduct');
+
 
     Route::post('/transaction/showDetail', 'TransactionController@showDetail')->name('transaction.showDetail');
     Route::post('kplaptop', 'ProductController@kumpulanLaptop')->name('kumpulanLaptop');
@@ -47,8 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('formEditBrand', 'BrandController@showEditModal')->name('formEditBrand');
     Route::post('formEditCategory', 'CategoryController@showEditModal')->name('formEditCategory');
     Route::post('formResetPassword', 'UserController@showResetPasswordModal')->name('formResetPassword');
-    Route::post('suspend', 'UserController@suspend')->name('user.suspend');
-    Route::post('loadNav', 'CategoryController@loadNav')->name('loadNav');
+    Route::post('add-to-cart', 'ProductController@addToCart')->name('product.addtocart');
 });
 
 Auth::routes();

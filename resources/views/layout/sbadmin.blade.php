@@ -37,12 +37,10 @@
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
                     @if (Auth::user() && Auth::user()->role->name=='Admin')
                     <a class="dropdown-item" href="{{ route('register') }}">{{ __('Register Pegawai') }}</a>
                     <a class="dropdown-item" href="{{ url('user') }}">{{ __('Manage Pegawai') }}</a>
                     @endif
-                    <div class="dropdown-divider"></div>
 
                     @if (Auth::user())
                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
@@ -55,6 +53,7 @@
                     </form>
                     @else
                     <a href="/login" class="dropdown-item">Log In</a>
+                    <a href="/register" class="dropdown-item">Register</a>
                     @endif
                 </div>
             </li>
@@ -67,8 +66,8 @@
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Core</div>
                         <a class="nav-link" href="{{url('/')}}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            Dashboard
+                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                           Home
                         </a>
                         <div class="sb-sidenav-menu-heading">Category</div>
                         <div id="category">
@@ -77,26 +76,35 @@
 
                         <div class="sb-sidenav-menu-heading">Addons</div>
                         <a class="nav-link" href="{{url('cart')}}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
                             Cart
                         </a>
-
-                        @can('crud-permission')
-                        <a class="nav-link" href="{{url('history')}}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                            History
-                        </a>
-                        @else
-                        <a class="nav-link" href="{{url('showHistory')}}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                            History
-                        </a>
-                        @endcan
 
                         <a class="nav-link" href="{{ route('compareProduct') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                             Compare Products
                         </a>
+
+                        @can('crud-permission')
+                        <a class="nav-link" href="{{url('transaction')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div>
+                            History
+                        </a>
+                        <a class="nav-link" href="{{ url('brand') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-flag"></i></div>
+                            Brand
+                        </a>
+
+                        <a class="nav-link" href="{{ url('category') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-th-list"></i></div>
+                            Category
+                        </a>
+                        @else
+                        <a class="nav-link" href="{{url('showHistory')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div>
+                            History
+                        </a>
+                        @endcan
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
@@ -125,6 +133,7 @@
         </div>
     </div>
     @yield('modal')
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     @yield('script')
     @yield('ajax')

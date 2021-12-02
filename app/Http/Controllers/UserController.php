@@ -14,7 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $data = User::where('role_id',2)->get();
+        $this->authorize('crud-permission');
+
+        $data = User::where('role_id', 2)->get();
         return view('user.index', compact('data'));
     }
 
@@ -25,7 +27,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('user.create');
+        //
     }
 
     /**
@@ -36,15 +38,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data = new User();
-
-        $data->username = $request->get('username');
-        $data->password = $request->get('password');
-        $data->fullname = $request->get('fullname');
-        $data->status = $request->get('status');
-        $data->role_id = $request->get('roleId');
-        $data->save();
-        return redirect()->route('user.index')->with('status', 'User is added');
+        //
     }
 
     /**
@@ -78,11 +72,13 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if(null !== $request->get('password')){
+        $this->authorize('admin-permission');
+
+        if (null !== $request->get('password')) {
             $user->password = bcrypt($request->get('password'));
             $user->save();
             return redirect()->route('user.index')->with('status', 'User password succesfully reset');
-        }else{
+        } else {
             $user->status = $request->get('status');
             $user->save();
             return redirect()->route('user.index')->with('status', 'Action succesfully done');
@@ -97,30 +93,17 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $this->authorize('delete-permission', $user);
-
-        try {
-            $user->delete();
-            return redirect()->route('user.index')->with('status', 'Data user succesfully deleted');
-        } catch (\PDOException $e) {
-            $msg =  $this->handleAllRemoveChild($user);
-            return redirect()->route('user.index')->with('error', $msg);
-        }
+        //
     }
 
     public function showResetPasswordModal(Request $request)
     {
+        $this->authorize('admin-permission');
+
         $id = $request->get('pegawaiId');
         $data = User::find($id);
         return response()->json(array(
             'msg' => view('user.modal', compact('data'))->render()
         ), 200);
-    }
-
-    public function suspend(Request $request, User $user)
-    {
-        $user->status = $request->get('status');
-        $user->save();
-        return redirect()->route('user.index')->with('status', 'Action succesfully done');
     }
 }

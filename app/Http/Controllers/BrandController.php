@@ -14,6 +14,7 @@ class BrandController extends Controller
      */
     public function index()
     {
+        $this->authorize('crud-permission');
         $data = Brand::all();
         return view('brand.index', compact('data'));
     }

@@ -16,7 +16,7 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->string('status', 20)->default('pending');
-            $table->double('total');
+            $table->double('total')->nullable();
             $table->timestamps();
         });
     }

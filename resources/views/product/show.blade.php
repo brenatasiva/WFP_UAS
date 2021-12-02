@@ -4,6 +4,7 @@
 <!-- Container for the image gallery -->
 <div class="containerslide">
     <!-- Full-width images with number text -->
+    @if (Auth::check())
     @php
     $total = count($data['images']);
     $c = 1
@@ -17,15 +18,22 @@
     $c++
     @endphp
     @endforeach
-
-    <!-- Next and previous buttons -->
     @if ($total > 1)
     <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
     <a class="next" onclick="plusSlides(1)">&#10095;</a>
     @endif
+    @else
+    <div class="mySlides">
+        <div class="numbertext">1</div>
+        <img src="{{ asset('img') }}/{{ $data['images'][0]->name }}" style="width: 100%">
+    </div>
+    @endif
+    
+
 
     <!-- Thumbnail images -->
     <div class="d-flex justify-content-center">
+        @if (Auth::check())
         @php
         $j = 1
         @endphp
@@ -38,8 +46,10 @@
         @endif
         @php
         $j++
-        @endphp
+        @endphp   
         @endforeach
+
+        @endif
     </div>
 </div>
 <div class="row pt-3">
@@ -81,10 +91,13 @@
         <div class="jumbotron py-4">
             <h1 class="display-4">Stock : {{ $data['product']->stock }}</h1>
             <hr class="my-4">
-            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+            <div class="d-flex align-items-center mb-4">
+                <button class="btn btn-outline-success" id="btnmin">-</button>
+                <p id="qty" class="px-5 m-0">1</p>
+                <button class="btn btn-outline-success" id="btnadd">+</button>
+            </div>
             <div class="d-flex justify-content-between">
-                <a href="#" class="btn btn-success">Add to Cart</a>
-                <a class="btn btn-danger" href="#" role="button">Checkout</a>
+                <button id="btnaddtocart" class="btn btn-success">Add to Cart</button>
             </div>
         </div>
     </div>
@@ -129,6 +142,47 @@
         dots[slideIndex - 1].className += " active";
     }
 
+</script>
+@endsection
+
+@section('ajax')
+<script>
+    let qty = parseInt($('#qty').html());
+    $('#btnadd').click(function(){
+        if (qty < {{ $data["product"]->stock }}) {
+            qty+=1;
+            $('#qty').html(qty);
+        }
+    });
+    $('#btnmin').click(function(){
+        if (qty > 1) {
+            qty-=1
+            $('#qty').html(qty);
+        }
+    });
+
+    $('#btnaddtocart').click(function(){
+        @if (Auth::user())
+            $.ajax({
+                url : "{{ route('product.addtocart') }}",
+                method : 'post',
+                data : {quantity : qty , id : {{ $data['product']->id }}, "_token" : '{{ csrf_token() }}' } ,
+                success : function(data){
+                    Swal.fire(
+                        'Good job!',
+                        'Berhasil menambahkan ke keranjang!',
+                        'success'
+                        )
+                }
+            })
+        @else
+        Swal.fire(
+                'Failed!',
+                'Anda harus login terlebih dahulu!',
+                'error'
+                )
+        @endif
+    });
 </script>
 @endsection
 

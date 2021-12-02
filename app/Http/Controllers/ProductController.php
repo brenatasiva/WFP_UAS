@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Brand;
 use App\Category;
 use App\Image;
 use App\Product;
@@ -18,16 +19,16 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $data = [];
-        foreach ($categories as $category ) {
+        foreach ($categories as $category) {
             $products = Product::where('category_id', $category->id)->get();
             $dataProduk = [];
-            foreach ($products as $product ) {
-                $images = Image::where('product_id',$product->id)->get();
+            foreach ($products as $product) {
+                $images = Image::where('product_id', $product->id)->get();
                 $dataImage = [];
-                foreach ($images as $image ) {
+                foreach ($images as $image) {
                     $dataImage[] = $image->name;
                 }
-                $dataProduk[] = ['produk' => $product, 'imageProduct' => $dataImage];               
+                $dataProduk[] = ['produk' => $product, 'imageProduct' => $dataImage];
             }
             $data["$category->name"] = $dataProduk;
         }
@@ -41,7 +42,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('product.create');
+        //
     }
 
     /**
@@ -52,6 +53,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('crud-permission');
+
         $data = new Product();
 
         if ($request->get('ram') != null)
@@ -93,8 +96,14 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $data = $product;
-        return view("product.edit", compact('data'));
+        $categories = Category::all();
+        $brands = Brand::all();
+        $images = Image::where('product_id', $product->id)->get();
+        $data['images'] = $images;
+        $data['product'] = $product;
+        $data['categories'] = $categories;
+        $data['brands'] = $brands;
+        return view('product.edit', compact('data'));
     }
 
     /**
@@ -106,19 +115,31 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        if ($request->get('ram') != null)
-            $spec = $request->get('ram') . ";" . $request->get('camera') . ";" . $request->get('screen') . ";" . $request->get('battery');
-        else
-            $spec = $request->get('spec');
+        $this->authorize('crud-permission');
+        // dd($request->get('spek'));
+        $specs = $request->get('spek');
+        if(count($specs)>1){
+            $spec = implode(';', $specs);
 
-        $product->name = $request->get('name');
+        }
+        else{
+            $spec = $specs[0];
+        }
+
+        $nama = $request->get('name');
+        $stok = $request->get('stock');
+        $price = $request->get('price');
+        $brand = $request->get('brand');
+        $category = $request->get('category');
+        
+        $product->name = $nama;
+        $product->stock = $stok;
+        $product->price = $price;
         $product->spec = $spec;
-        $product->stock = $request->get('stock');
-        $product->price = $request->get('price');
-        $product->category_id = $request->get('categoryId');
-        $product->brand_id = $request->get('brandId');
+        $product->brand_id = $brand;
+        $product->category_id = $category;
         $product->save();
-        return redirect()->route('product.index')->with('status', 'Data product succesfully changed');
+        return redirect()->route('product.edit',$product->id)->with('status', 'Data product succesfully changed');
     }
 
     /**
@@ -142,23 +163,31 @@ class ProductController extends Controller
 
     public function getProductPerCategory($id)
     {
-        $data = Product::where('category_id', $id)->get();
+        $data = [];
+        $products = Product::where('category_id', $id)->get();
+        foreach ($products as $product) {
+            $images = Image::where('product_id', $product->id)->get();
+            $data[] = ['products' => $product, 'images' => $images];
+        }
         return view('product.showProductCategory', compact('data'));
     }
 
-    public function addToCart($id)
+    public function addToCart(Request $request)
     {
+        $this->authorize('checkmember');
+        $id = $request->get('id');
+        $qty = $request->get('quantity');
         $p = Product::find($id);
         $cart = session()->get('cart');
         if (!isset($cart[$id])) {
             $cart[$id] = [
                 'productId' => $p->id,
                 'name' => $p->name,
-                'quantity' => 1,
+                'quantity' => $qty,
                 'price' => $p->price,
             ];
         } else {
-            $cart[$id]['quantity']++;
+            $cart[$id]['quantity'] += $qty;
         }
         session()->put('cart', $cart);
         return redirect()->back()->with('success', 'product add to cart succesfully');
@@ -167,16 +196,21 @@ class ProductController extends Controller
     public function cart()
     {
         $this->authorize('checkmember');
+
         return view('transaction.cart');
     }
 
     public function compareProduct()
     {
+        $this->authorize('checklogin');
+
         return view('product.compare');
     }
 
     public function kumpulanLaptop(Request $request)
     {
+        $this->authorize('checklogin');
+
         $name = $request->get('name');
         $data = Product::where('name', 'like', "%$name%")->where('category_id', 1)->get();
         return response()->json(array(
@@ -186,12 +220,14 @@ class ProductController extends Controller
 
     public function getLaptop(Request $request)
     {
+        $this->authorize('checklogin');
+
         $id = $request->get('id');
         // $id = 1;
         $product = Product::find($id);
         $image = Image::where('product_id', $id)->get();
         return response()->json(array(
-            'msg' => view('product.cardLaptop', compact(['product','image']))->render()
+            'msg' => view('product.cardLaptop', compact(['product', 'image']))->render()
         ), 200);
     }
 
@@ -206,9 +242,11 @@ class ProductController extends Controller
 
     public function getLaptopData(Request $request)
     {
+        $this->authorize('checklogin');
+
         $id = $request->get('id');
-        $image = Image::where('product_id',$id)->get();
+        $image = Image::where('product_id', $id)->get();
         $data = Product::find($id);
-        return response()->json(['product'=>$data,'img'=>$image]);
+        return response()->json(['product' => $data, 'img' => $image]);
     }
 }

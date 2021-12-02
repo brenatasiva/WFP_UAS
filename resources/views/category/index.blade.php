@@ -1,6 +1,12 @@
 @extends('layout.sbadmin')
 @section('content')
 
+@if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
+
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalCreate" onclick="">
     Add category
 </button>
@@ -9,6 +15,8 @@
         <tr>
             <th>No</th>
             <th>Name</th>
+            <th>Type</th>
+            <th>Unit</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -18,6 +26,8 @@
         <tr>
             <td>{{$i}}</td>
             <td>{{$d->name}}</td>
+            <td>{{$d->type}}</td>
+            <td>{{$d->unit}}</td>
             <td>
                 <button onclick="modalEdit({{$d->id}})" data-toggle="modal" data-target="#modalEdit">Edit</button>
                 @can('crud-permission', $d)

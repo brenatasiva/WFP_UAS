@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Product;
+use App\TransactionDetail;
 
 class TransactionController extends Controller
 {
@@ -17,6 +18,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
+        $this->authorize('crud-permission');
+
         $data = Transaction::all();
         return view('transaction.index', compact('data'));
     }
@@ -28,7 +31,7 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        return view('transaction.create');
+        //
     }
 
     /**
@@ -39,6 +42,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('checkmember');
         $data = new Transaction();
 
         $data->status = $request->get('status');
@@ -56,9 +60,9 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        $this->authorize('checkpegawai');
+        $this->authorize('checkmember');
 
-        $data = $transaction::all();
+        $data = Transaction::where('user_id', Auth::user()->id)->get();
         return view('transaction.index', compact('data'));
     }
 
@@ -70,6 +74,8 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
+        $this->authorize('crud-permission');
+
         $data = $transaction;
         return view("transaction.edit", compact('data'));
     }
@@ -83,11 +89,18 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        $transaction->status = $request->get('status');
-        $transaction->total = $request->get('total');
-        $transaction->user_id = $request->get('userId');
+        $this->authorize('crud-permission');
+
+        $status = $request->get('status');
+
+        if ($status == 'ditolak') {
+            $td = TransactionDetail::where('transaction_id', $transaction->id)->get();
+            $this->addStock($td);
+        }
+
+        $transaction->status = $status;
         $transaction->save();
-        return redirect()->route('transaction.index')->with('status', 'Data transaction succesfully changed');
+        return redirect()->route('transaction.index')->with('status', 'Data Transaction succesfully changed');
     }
 
     /**
@@ -98,15 +111,7 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        $this->authorize('delete-permission', $transaction);
-
-        try {
-            $transaction->delete();
-            return redirect()->route('transaction.index')->with('status', 'Data transaction succesfully deleted');
-        } catch (\PDOException $e) {
-            $msg =  $this->handleAllRemoveChild($transaction);
-            return redirect()->route('transaction.index')->with('error', $msg);
-        }
+        //
     }
 
     public function formSubmit()
@@ -130,17 +135,30 @@ class TransactionController extends Controller
         $t->total = $totalHarga;
         $t->save();
 
-        $this->subtractQuantity($cart);
+        foreach ($cart as $id => $detail) {
+            $p = Product::find($detail['productId']);
+            $p->stock = $p->stock - $detail['quantity'];
+            $p->save();
+        }
 
         session()->forget('cart');
         return redirect('home');
     }
 
-    public function subtractQuantity($cart)
+    public function subtractStock($data)
     {
-        foreach ($cart as $id => $detail) {
-            $p = Product::find($detail['productId']);
-            $p->stock = $p->stock - $detail['quantity'];
+        foreach ($data as $d) {
+            $p = Product::find($d->product_id);
+            $p->stock = $p->stock - $d->quantity;
+            $p->save();
+        }
+    }
+
+    public function addStock($data)
+    {
+        foreach ($data as $d) {
+            $p = Product::find($d->product_id);
+            $p->stock = $p->stock + $d->quantity;
             $p->save();
         }
     }
@@ -152,16 +170,12 @@ class TransactionController extends Controller
 
     public function showDetail(Request $request)
     {
+        $this->authorize('checklogin');
+
         $id = $request->get('transactionId');
         $data = Transaction::find($id);
         return response()->json(array(
             'msg' => view('transaction.modal', compact('data'))->render()
         ), 200);
-    }
-
-    public function showHistory()
-    {
-        $data = Transaction::where('user_id', Auth::user()->id)->get();
-        return view('transaction.index', compact('data'));
     }
 }

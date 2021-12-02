@@ -10,7 +10,7 @@
         @endphp
         @foreach ($data as $key => $d)
         <div class="border-top border-bottom">
-            <h1 class="h1 text-center my-2"><a href="{{ route('product.showProductCategory',$id) }}">{{$key}}</a></h1>
+            <h1 class="h1 text-center my-2"><a href="{{ route('product.showProductCategory',$id) }}" class="text-dark">{{$key}}</a></h1>
             <div class="row p-3 justify-content-around">
                 <?php $c = 0; ?>
                 @foreach ($d as $product)
