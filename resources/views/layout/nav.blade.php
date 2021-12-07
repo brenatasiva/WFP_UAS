@@ -19,7 +19,7 @@
 </div>
 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccessories" aria-expanded="false"
     aria-controls="collapseAccessoriess">
-    <div class="sb-nav-link-icon"><i class="fas fa-link"></i></div>
+    <div class="sb-nav-link-icon"><i class="fas fa-paperclip"></i></div>
     Accessories
     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
 </a>

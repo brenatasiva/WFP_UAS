@@ -13,7 +13,7 @@
     $product = $data['product'];
 @endphp
 <div class="container-fluid">
-<form class="mt-4" action="{{ route('product.update',$product->id) }}" method="POST">
+<form class="mt-4" action="{{ route('product.update',$product->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
     <div class="form-group row">
@@ -113,15 +113,13 @@
         @endforeach
     </div>
     <div class="form-group">
-        <label for="exampleFormControlFile1">Example file input</label>
-        <input type="file" class="form-control-file" id="exampleFormControlFile1" name="images[]">
+        <label for="exampleFormControlFile1">Input Image Product</label>
+        <input type="file" class="form-control-file" id="exampleFormControlFile1" name="images[]" multiple>
     </div>
-    <div class="form-group row">
-        <div class="col-sm-10">
-            
-            <button type="submit" class="btn btn-warning">Edit</button>
-        </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-warning btn-block">Edit</button>
   </div>
 </form>
+
 </div>
 @endsection

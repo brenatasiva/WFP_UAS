@@ -18,24 +18,18 @@
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+        <a class="navbar-brand" href="/"><i class="fas fa-user fa-trophy"></i> Bukalaptop</a>
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i
                 class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
         <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search"
-                    aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
+            
         </form>
         <!-- Navbar-->
         <ul class="navbar-nav ml-auto ml-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i> @if(Auth::user()){{Auth::user()->fullname}}@else Login/Register @endif</a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                     @if (Auth::user() && Auth::user()->role->name=='Admin')
                     <a class="dropdown-item" href="{{ route('register') }}">{{ __('Register Pegawai') }}</a>
@@ -45,7 +39,7 @@
                     @if (Auth::user())
                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();">
-                        {{ __('Logout') }}
+                         {{ __('Logout') }}
                     </a>
 
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -75,10 +69,12 @@
                         </div>
 
                         <div class="sb-sidenav-menu-heading">Addons</div>
-                        <a class="nav-link" href="{{url('cart')}}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
-                            Cart
-                        </a>
+                        @can('checkmember')
+                            <a class="nav-link" href="{{url('cart')}}">
+                                <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
+                                Cart
+                            </a>
+                        @endcan
 
                         <a class="nav-link" href="{{ route('compareProduct') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
@@ -99,8 +95,12 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-th-list"></i></div>
                             Category
                         </a>
+                        <a class="nav-link" href="{{route('product.create')}}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                            Add Product
+                        </a>
                         @else
-                        <a class="nav-link" href="{{url('showHistory')}}">
+                        <a class="nav-link" href="{{url('history')}}">
                             <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div>
                             History
                         </a>
@@ -108,7 +108,7 @@
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as: @if(Auth::user()){{Auth::user()->fullname}}@endif</div>
+                    <div class="small">Logged in as: @if(Auth::user()){{Auth::user()->role->name}}@endif</div>
                 </div>
             </nav>
         </div>

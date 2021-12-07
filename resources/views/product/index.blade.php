@@ -3,7 +3,7 @@
 <main>
     <div class="container-fluid">
         <ol class="breadcrumb mt-4">
-            <li class="breadcrumb-item active">Products</li>
+            <li class="breadcrumb-item active">Home</li>
         </ol>
         @php
         $id = 1;
@@ -24,16 +24,24 @@
                             <p>Harga : {{ number_format($product['produk']->price) }}</p>
                             @else
                             <?php
-                                    $price = number_format($product['produk']->price);
-                                    $price = explode(",", $price);
-                                    $i = 0;
-                                    foreach ($price as $p) {
-                                        if($i>0)
-                                            $price[$i] = 'xxx';
-                                        $i++;
+                                $price = number_format($product['produk']->price);
+                                $price = explode(",", $price);
+                                if(strlen($price[0]) > 1){
+                                    if((strlen($price[0]) > 2)){
+                                        $price[0] = substr($price[0],0,1) . "xx";
+                                    }else if(count($price) < 3){
+                                        $price[0] = substr($price[0],0,1) . "x";
                                     }
-                                    $price = implode(',', $price);
-                                    ?>
+                                }
+                                $i = 0;
+                                foreach ($price as $p) {
+                                    if($i>0)
+                                        $price[$i] = 'xxx';
+                                    $i++;
+                                }
+                                $price = implode(',', $price);
+                            ?>
+                            <p>Stock : {{$product['produk']->stock}}</p>
                             <p>Harga : {{ $price }}</p>
                             @endif
                         </div>

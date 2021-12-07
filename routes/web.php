@@ -26,6 +26,7 @@ Route::get('/forget', 'TransactionController@forgetSession');
 
 Route::post('showSpec', 'ProductController@showSpec')->name('product.showSpec');
 Route::post('loadNav', 'CategoryController@loadNav')->name('loadNav');
+Route::get('/compare', 'ProductController@compareProduct')->name('compareProduct');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('transaction', 'TransactionController');
@@ -36,8 +37,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('checkout', 'TransactionController@formSubmit');
     Route::get('submit_checkout', 'TransactionController@submitCheckout')->name('submitCheckout');
     Route::get('history', 'TransactionController@show');
-    Route::get('showHistory', 'TransactionController@show');
-    Route::get('/compare', 'ProductController@compareProduct')->name('compareProduct');
 
 
     Route::post('/transaction/showDetail', 'TransactionController@showDetail')->name('transaction.showDetail');

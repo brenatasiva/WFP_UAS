@@ -2,7 +2,10 @@
 
 @section('content')
 <div class="container-fluid">
-    <h4>Bandingkan Laptop</h4>
+    <ol class="breadcrumb mt-4">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Compare Laptop</li>
+        </ol>
     <div class="row">
         <div class="col-lg-6">
             <div class="card p2 mb-2 d-flex flex-column justify-content-around" style="min-height: 25vh;">

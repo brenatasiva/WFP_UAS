@@ -6,61 +6,68 @@
         {{ session('status') }}
     </div>
 @endif
-
-<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Status</th>
-            <th>Total</th>
-            
-            @if (Auth::user()->role->name == 'Admin' || Auth::user()->role->name == 'Pegawai')
-                <th>User</th>
-                <th>Detail</th>
-                <th>Action</th>
-                @else
-                <th>Detail</th>
-            @endif
-            
-        </tr>
-    </thead>
-    <tbody>
-        <?php $i = 1; ?>
-        @foreach ($data as $d)
+<div class="container-fluid">
+    <ol class="breadcrumb mt-4">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">History</li>
+        </ol>
+    <table class="table table-bordered mt-5" id="dataTable" width="100%" cellspacing="0">
+        <thead>
             <tr>
-                <td>{{$i}}</td>
-                <td>{{$d->status}}</td>
-                <td>{{number_format($d->total)}}</td>
+                <th>No</th>
+                <th>Status</th>
+                <th>Total</th>
+                
                 @if (Auth::user()->role->name == 'Admin' || Auth::user()->role->name == 'Pegawai')
-                    <td>{{$d->user->fullname}}</td>
-                    <td><button onclick="showDetail({{$d->id}})" data-toggle="modal" data-target="#modalDetail">Lihat Detail</button></td>
-                    <td>
-                        @if ($d->status == 'ditolak')
-                            <button type="button" class="btn btn-danger" disabled>TERTOLAK</button>
-                            @else
-                                <form method="post" action="{{url('transaction/'.$d->id)}}">
-                                @csrf
-                                @method('PUT')
-                                <select name="status" id="status">
-                                    <option value="diterima">Diterima</option>
-                                    <option value="ditolak">Ditolak</option>
-                                    <option value="pending">Pending</option>
-                                </select>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                                </form>
-                        @endif
-                        
-                    </td>
+                    <th>User</th>
+                    <th>Detail</th>
+                    <th>Action</th>
                     @else
-                    <td><button onclick="showDetail({{$d->id}})" data-toggle="modal" data-target="#modalDetail">Lihat Detail</button></td>
+                    <th>Detail</th>
                 @endif
+                
             </tr>
-            <?php 
-                $i++
-            ?>
-        @endforeach 
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <?php $i = 1; ?>
+            @foreach ($data as $d)
+                <tr>
+                    <td>{{$i}}</td>
+                    <td>{{$d->status}}</td>
+                    <td>{{number_format($d->total)}}</td>
+                    @if (Auth::user()->role->name == 'Admin' || Auth::user()->role->name == 'Pegawai')
+                        <td>{{$d->user->fullname}}</td>
+                        <td><button class="btn btn-info" onclick="showDetail({{$d->id}})" data-toggle="modal" data-target="#modalDetail">Lihat Detail</button></td>
+                        <td>
+                            @if ($d->status == 'ditolak')
+                                <button type="button" class="btn btn-danger" disabled>TERTOLAK</button>
+                                @else
+                                    <form method="post" action="{{url('transaction/'.$d->id)}}">
+                                    @csrf
+                                    @method('PUT')
+                                    <select name="status" id="status">
+                                        <option value="diterima">Diterima</option>
+                                        <option value="ditolak">Ditolak</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-warning">Submit</button>
+                                    </form>
+                            @endif
+                            
+                        </td>
+                        @else
+                        <td><button onclick="showDetail({{$d->id}})" data-toggle="modal" data-target="#modalDetail">Lihat Detail</button></td>
+                    @endif
+                </tr>
+                <?php 
+                    $i++
+                ?>
+            @endforeach 
+        </tbody>
+    </table>
+
+</div>
+
 @endsection
 
 @section('modal')

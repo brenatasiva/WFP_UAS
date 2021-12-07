@@ -6,40 +6,46 @@
         {{ session('status') }}
     </div>
 @endif
+<div class="container-fluid">
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Brand</li>
+    </ol>
 
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalCreate" onclick="">
-    Add Brand
-</button>
-<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Name</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php $i=1; ?>
-        @foreach ($data as $d)
-        <tr>
-            <td>{{$i}}</td>
-            <td>{{$d->name}}</td>
-            <td>
-                <button onclick="modalEdit({{$d->id}})" data-toggle="modal" data-target="#modalEditBrand">Edit</button>
-                @can('crud-permission', $d)
-                <form method="post" action="{{route('brand.destroy', $d->id)}}">
-                    @csrf
-                    @method('delete')
-                    <button type="submit" class="btn btn-danger btn-lg"
-                        onclick="if(!confirm('Are you sure you want to delete this brand?')){return false;}">Delete</button>
-                </form>
-                @endcan
-            </td>
-        </tr>
-        <?php $i++; ?>
-        @endforeach
-    </tbody>
-</table>
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalCreate" onclick="">
+        Add Brand
+    </button><br><br>
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="table-layout: fixed;">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php $i=1; ?>
+            @foreach ($data as $d)
+            <tr>
+                <td>{{$i}}</td>
+                <td>{{$d->name}}</td>
+                <td class="d-flex justify-content-center">
+                    <button onclick="modalEdit({{$d->id}})" class="btn btn-warning" data-toggle="modal" data-target="#modalEditBrand">Edit</button>&nbsp&nbsp
+                    @can('crud-permission', $d)
+                    <form method="post" action="{{route('brand.destroy', $d->id)}}">
+                        @csrf
+                        @method('delete')
+                        <button type="submit" class="btn btn-danger btn-lg"
+                            onclick="if(!confirm('Are you sure you want to delete this brand?')){return false;}">Delete</button>
+                    </form>
+                    @endcan
+                </td>
+            </tr>
+            <?php $i++; ?>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 @endsection
 
 @section('modal')

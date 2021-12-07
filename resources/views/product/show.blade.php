@@ -81,9 +81,33 @@
                 @endif
                 @endforeach
                 @endif
+                @if(Auth::user())
                 <p>
                     <h1 class="text-center">Rp{{ number_format($data['product']->price) }}</h1>
                 </p>
+                @else
+                @php
+                    $price = number_format($data['product']->price);
+                    $price = explode(",", $price);
+                    if(strlen($price[0]) > 1){
+                        if((strlen($price[0]) > 2)){
+                            $price[0] = substr($price[0],0,1) . "xx";
+                        }else if(count($price) < 3){
+                            $price[0] = substr($price[0],0,1) . "x";
+                        }
+                    }
+                    $i = 0;
+                    foreach ($price as $p) {
+                        if($i>0)
+                            $price[$i] = 'xxx';
+                        $i++;
+                    }
+                    $price = implode(',', $price);
+                @endphp
+                <p>
+                    <h1 class="text-center">Rp{{$price}}</h1>
+                </p>
+                @endif
             </div>
         </div>
     </div>

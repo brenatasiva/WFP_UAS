@@ -7,6 +7,7 @@ use App\Category;
 use App\Image;
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
@@ -42,7 +43,11 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        $brands = Brand::all();
+        $data['categories'] = $categories;
+        $data['brands'] = $brands;
+        return view('product.create', compact('data'));
     }
 
     /**
@@ -54,22 +59,41 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $this->authorize('crud-permission');
+        $product = new Product;
+        $specs = $request->get('spek');
+        if (count($specs) > 1) {
+            $spec = implode(';', $specs);
+        } else {
+            $spec = $specs[0];
+        }
 
-        $data = new Product();
+        $nama = $request->get('name');
+        $stok = $request->get('stock');
+        $price = $request->get('price');
+        $brand = $request->get('brand');
+        $category = $request->get('category');
 
-        if ($request->get('ram') != null)
-            $spec = $request->get('ram') . ";" . $request->get('camera') . ";" . $request->get('screen') . ";" . $request->get('battery');
-        else
-            $spec = $request->get('spec');
-
-        $data->name = $request->get('name');
-        $data->spec = $spec;
-        $data->stock = $request->get('stock');
-        $data->price = $request->get('price');
-        $data->category_id = $request->get('categoryId');
-        $data->brand_id = $request->get('brandId');
-        $data->save();
-        return redirect()->route('product.index')->with('status', 'Product is added');
+        $product->name = $nama;
+        $product->stock = $stok;
+        $product->price = $price;
+        $product->spec = $spec;
+        $product->brand_id = $brand;
+        $product->category_id = $category;
+        $product->save();
+        $uploaded_images = $request->file('images');
+        $catname = strtolower($product->category->name);
+        $imgpath = "img/" . $catname;
+        if ($uploaded_images != null) {
+            foreach ($uploaded_images as $nama_file) {
+                $imgFile = $catname . "/" . date('mdYHis') . uniqid() . $nama_file->getClientOriginalName();
+                $nama_file->move($imgpath, $imgFile);
+                $image = new Image;
+                $image->name = $imgFile;
+                $image->product_id = $product->id;
+                $image->save();
+            }
+        }
+        return redirect()->route('product.showProductCategory', $product->category->id)->with('status', 'Product is added');
     }
 
     /**
@@ -116,22 +140,42 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $this->authorize('crud-permission');
-        // dd($request->get('spek'));
         $specs = $request->get('spek');
-        if(count($specs)>1){
+        if (count($specs) > 1) {
             $spec = implode(';', $specs);
-
-        }
-        else{
+        } else {
             $spec = $specs[0];
         }
 
+        $uploaded_images = $request->file('images');
+        $deleted_images = $request->get('delete_pic');
+        $catname = strtolower($product->category->name);
+        $imgpath = "img/" . $catname;
+        if ($uploaded_images != null) {
+            foreach ($uploaded_images as $nama_file) {
+                $imgFile = $catname . "/" . date('mdYHis') . uniqid() . $nama_file->getClientOriginalName();
+                $nama_file->move($imgpath, $imgFile);
+                $image = new Image;
+                $image->name = $imgFile;
+                $image->product_id = $product->id;
+                $image->save();
+            }
+        }
+
+        if ($deleted_images != null) {
+            foreach ($deleted_images as $idimg) {
+                $image = Image::find($idimg);
+                $imgFile = "img/$image->name";
+                $image->delete();
+                // File::delete($imgFile);
+            }
+        }
         $nama = $request->get('name');
         $stok = $request->get('stock');
         $price = $request->get('price');
         $brand = $request->get('brand');
         $category = $request->get('category');
-        
+
         $product->name = $nama;
         $product->stock = $stok;
         $product->price = $price;
@@ -139,7 +183,7 @@ class ProductController extends Controller
         $product->brand_id = $brand;
         $product->category_id = $category;
         $product->save();
-        return redirect()->route('product.edit',$product->id)->with('status', 'Data product succesfully changed');
+        return redirect()->route('product.edit', $product->id)->with('status', 'Data product succesfully changed');
     }
 
     /**
@@ -150,14 +194,19 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $this->authorize('delete-permission', $product);
+        $this->authorize('crud-permission');
 
+        $categoryid = $product->category->id;
         try {
+            $images = Image::where('product_id', $product->id)->get();
+            foreach ($images as $image) {
+                $image->delete();
+            }
             $product->delete();
-            return redirect()->route('product.index')->with('status', 'Data product succesfully deleted');
+            return redirect()->route('product.showProductCategory', $categoryid)->with('status', 'Data product succesfully deleted');
         } catch (\PDOException $e) {
             $msg =  $this->handleAllRemoveChild($product);
-            return redirect()->route('product.index')->with('error', $msg);
+            return redirect()->route('product.showProductCategory', $categoryid)->with('error', $msg);
         }
     }
 
@@ -202,8 +251,6 @@ class ProductController extends Controller
 
     public function compareProduct()
     {
-        $this->authorize('checklogin');
-
         return view('product.compare');
     }
 
