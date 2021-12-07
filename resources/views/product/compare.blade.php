@@ -3,9 +3,9 @@
 @section('content')
 <div class="container-fluid">
     <ol class="breadcrumb mt-4">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active">Compare Laptop</li>
-        </ol>
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Compare Laptop</li>
+    </ol>
     <div class="row">
         <div class="col-lg-6">
             <div class="card p2 mb-2 d-flex flex-column justify-content-around" style="min-height: 25vh;">
@@ -65,43 +65,6 @@
 @section('modal')
 <!-- Modal -->
 <div class="modal fade" id="modalCariLaptop" tabindex="-1" aria-labelledby="modalCariLaptopLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalCariLaptopLabel">Cari Laptop</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            @if (Auth::user())
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="namaLaptop">Nama Laptop</label>
-                    <input type="text" class="form-control" id="namaLaptop" autocomplete="off">
-                    <ul class="list-group">
-                    </ul>
-                    <div id="localSearchSimple"></div>
-                    <div id="spec">
-
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btnsave" disabled data-dismiss="modal">Save
-                    changes</button>
-            </div>
-            @else
-            <div class="modal-body">
-                <p class="text-center">Log In terlebih dahulu untuk bisa menikmati fitur ini!</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a href="/login" class="btn btn-primary">Log In</a>
-            </div>
-            @endif
-        </div>
-    </div>
 </div>
 @endsection
 
@@ -112,7 +75,7 @@
 @section('ajax')
 <script>
     $(function () {
-        $('body').on('keyup','#namaLaptop', function () {
+        $('body').on('keyup', '#namaLaptop', function () {
             const nama = $('#namaLaptop').val();
             $('.list-group').css('display', 'block');
             if (nama.length == 2) {
@@ -158,11 +121,50 @@
             });
         });
 
-        // $('.btncarilaptop').click(function(){
-            
-        // });
+        let idbtn = "";
+        $('.btncarilaptop').click(function () {
+            $('#modalCariLaptop').html(`<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCariLaptopLabel">Cari Laptop</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @if (Auth::user())
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="namaLaptop">Nama Laptop</label>
+                    <input type="text" class="form-control" id="namaLaptop" autocomplete="off">
+                    <ul class="list-group">
+                    </ul>
+                    <div id="localSearchSimple"></div>
+                    <div id="spec">
 
-        $('#btnsave').click(function () {
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnsave" disabled data-dismiss="modal">Save
+                    changes</button>
+            </div>
+            @else
+            <div class="modal-body">
+                <p class="text-center">Log In terlebih dahulu untuk bisa menikmati fitur ini!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a href="/login" class="btn btn-primary">Log In</a>
+            </div>
+            @endif
+        </div>
+    </div>`);
+
+            idbtn = $(this)[0].id;
+        });
+
+        $('body').on('click', '#btnsave', function () {
             const id = $('#idlaptop').data('id');
             $.ajax({
                 url: "{{ route('getLaptopData') }}",
@@ -187,14 +189,14 @@
                         }
                         i++;
                     });
-                    if ($('#card1').html() == "") {
+
+                    if (idbtn == "btncarilaptop1") {
                         $('#card1').html("");
                         $('#card1').append(`<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
                                                 <div class="carousel-inner">
                                                     ${item}
                                                 </div>
                                                 </div>
-                                                
                                                 `);
                         $('#nameL1').html(data.product['name']);
                         $('#ram1').html(spec[0] + " GB");
@@ -206,21 +208,42 @@
                         $('#prc1').html(new Intl.NumberFormat().format(
                             data.product[
                                 'price']));
-                    } else {
-                        $('#card2').html("");
-                        $('#card2').append(`<div id="carouselExampleControls2" class="carousel slide" data-ride="carousel">
+                    } else if (idbtn == "btncarilaptop2") {
+                        if ($('#card1').html() == "") {
+                            $('#card1').html("");
+                            $('#card1').append(`<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                                                <div class="carousel-inner">
+                                                    ${item}
+                                                </div>
+                                                </div>
+                                                
+                                                `);
+                            $('#nameL1').html(data.product['name']);
+                            $('#ram1').html(spec[0] + " GB");
+                            $('#cam1').html(spec[1] +
+                                " MP");
+                            $('#scr1').html(spec[2] + " Inch");
+                            $('#btr1').html(spec[
+                                3] + " mAh");
+                            $('#prc1').html(new Intl.NumberFormat().format(
+                                data.product[
+                                    'price']));
+                        } else {
+                            $('#card2').html("");
+                            $('#card2').append(`<div id="carouselExampleControls2" class="carousel slide" data-ride="carousel">
                                                 <div class="carousel-inner">
                                                     ${item}
                                                 </div>
                                                 </div>`);
-                        $('#nameL2').html(data.product['name']);
-                        $('#ram2').html(spec[0] + " GB");
-                        $('#cam2').html(spec[1] + " MP");
-                        $('#scr2').html(spec[2] + " Inch");
-                        $('#btr2').html(spec[3] + " mAh");
-                        $('#prc2').html(new Intl.NumberFormat().format(data
-                            .product[
-                                'price']));
+                            $('#nameL2').html(data.product['name']);
+                            $('#ram2').html(spec[0] + " GB");
+                            $('#cam2').html(spec[1] + " MP");
+                            $('#scr2').html(spec[2] + " Inch");
+                            $('#btr2').html(spec[3] + " mAh");
+                            $('#prc2').html(new Intl.NumberFormat().format(data
+                                .product[
+                                    'price']));
+                        }
                     }
                 }
             })
