@@ -18,7 +18,7 @@
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="/"><i class="fas fa-user fa-trophy"></i> Bukalaptop</a>
+        <a class="navbar-brand" href="/"><i class="fas fa-user fa-trophy"></i> BukaLaptop</a>
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i
                 class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
@@ -121,7 +121,7 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2020</div>
+                        <div class="text-muted">Copyright &copy; BukaLaptop 2021</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;

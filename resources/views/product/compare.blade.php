@@ -11,7 +11,7 @@
             <div class="card p2 mb-2 d-flex flex-column justify-content-around" style="min-height: 25vh;">
                 <h3 class="text-center" id="nameL1">Cari Laptop</h3>
                 <div id="card1"></div>
-                <button class="btn btn-outline-primary" id="btncarilaptop1" data-toggle="modal"
+                <button class="btn btn-outline-primary btncarilaptop" id="btncarilaptop1" data-toggle="modal"
                     data-target="#modalCariLaptop">Cari Laptop</button>
             </div>
         </div>
@@ -19,7 +19,7 @@
             <div class="card p2 mb-2 d-flex flex-column justify-content-around" style="min-height: 25vh;">
                 <h3 class="text-center" id="nameL2">Cari Laptop</h3>
                 <div id="card2"></div>
-                <button class="btn btn-outline-primary" id="btncarilaptop2" data-toggle="modal"
+                <button class="btn btn-outline-primary btncarilaptop" id="btncarilaptop2" data-toggle="modal"
                     data-target="#modalCariLaptop">Cari Laptop</button>
             </div>
         </div>
@@ -112,7 +112,7 @@
 @section('ajax')
 <script>
     $(function () {
-        $('#namaLaptop').on('keyup', function () {
+        $('body').on('keyup','#namaLaptop', function () {
             const nama = $('#namaLaptop').val();
             $('.list-group').css('display', 'block');
             if (nama.length == 2) {
@@ -158,6 +158,10 @@
             });
         });
 
+        // $('.btncarilaptop').click(function(){
+            
+        // });
+
         $('#btnsave').click(function () {
             const id = $('#idlaptop').data('id');
             $.ajax({
@@ -190,14 +194,6 @@
                                                     ${item}
                                                 </div>
                                                 </div>
-                                                <button class="carousel-control-prev" type="button" data-target="#carouselExampleControls" data-slide="prev">
-                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                    <span class="sr-only">Previous</span>
-                                                </button>
-                                                <button class="carousel-control-next" type="button" data-target="#carouselExampleControls" data-slide="next">
-                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                    <span class="sr-only">Next</span>
-                                                </button>
                                                 
                                                 `);
                         $('#nameL1').html(data.product['name']);
@@ -216,17 +212,7 @@
                                                 <div class="carousel-inner">
                                                     ${item}
                                                 </div>
-                                                </div>
-                                                <button class="carousel-control-prev" type="button" data-target="#carouselExampleControls2" data-slide="prev">
-                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                    <span class="sr-only">Previous</span>
-                                                </button>
-                                                <button class="carousel-control-next" type="button" data-target="#carouselExampleControls2" data-slide="next">
-                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                    <span class="sr-only">Next</span>
-                                                </button>
-                                                
-                                                `);
+                                                </div>`);
                         $('#nameL2').html(data.product['name']);
                         $('#ram2').html(spec[0] + " GB");
                         $('#cam2').html(spec[1] + " MP");

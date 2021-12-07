@@ -15,6 +15,7 @@
                         <img src="{{ asset('img') }}/{{$path}}" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h4 class="card-text">{{ $d['products']->name }}</h4>
+                            <p>Stock : {{$d['products']->stock}}</p>
                             @if(Auth::user())
                             <p>Harga : {{ number_format($d['products']->price) }}</p>
                             @else
@@ -36,7 +37,6 @@
                                 }
                                 $price = implode(',', $price);
                             ?>
-                            <p>Stock : {{$d['products']->stock}}</p>
                             <p>Harga : {{ $price }}</p>
                             @endif
                         </div>

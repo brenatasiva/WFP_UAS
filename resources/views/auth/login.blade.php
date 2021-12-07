@@ -11,8 +11,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="bg-primary">
-        <div id="layoutAuthentication">
-            <div id="layoutAuthentication_content">
+        <div id="layoutAuthentication" class="justify-content-center">
+            <div id="layoutAuthentication_content" class="flex-grow-0">
                 <main>
                     <div class="container">
                         <div class="row justify-content-center">
